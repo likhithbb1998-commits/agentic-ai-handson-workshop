@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Sparkles,
   Users,
+  XCircle,
 } from "lucide-react";
 import type { Lesson } from "@/lib/types";
 
@@ -58,7 +59,7 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
           </div>
         )}
 
-        {/* Visual Graphic with Animated Badges */}
+        {/* Visual Graphic */}
         <figure className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2 shadow-inner">
           <Image
             unoptimized
@@ -138,7 +139,7 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
         <ConceptCheck lesson={lesson} />
       </div>
 
-      {/* Right Column: Dynamic Animated Diagram */}
+      {/* Right Column: Unique Lesson Animation */}
       <div className="space-y-6">
         <LessonSpecificAnimation lessonOrder={lesson.order} />
         <AgentDiagram />
@@ -168,6 +169,118 @@ function theoryVisual(order: number) {
 }
 
 function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
+  // Lesson 1: Monolithic Prompt vs Specialist Split
+  if (lessonOrder === 1) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-4">
+        <div className="flex items-center gap-2 text-rose-400 font-black text-xs uppercase tracking-wider">
+          <XCircle size={16} />
+          <span>Single Prompt Monolith (High Failure Rate)</span>
+        </div>
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-200 font-mono">
+          1 Prompt trying to Research + Write + Code + Safety Check... <span className="text-rose-400 font-bold">❌ Hallucination Risk</span>
+        </div>
+        <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-wider pt-2">
+          <CheckCircle2 size={16} />
+          <span>Specialist Multi-Agent Team (High Accuracy)</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
+          <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30">Researcher</div>
+          <div className="p-2.5 rounded-xl bg-violet-500/20 text-violet-300 border border-violet-500/30">Writer</div>
+          <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Reviewer</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 2: Multi-Agent System Topology
+  if (lessonOrder === 2) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-4">
+        <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-wider">
+          <Network size={16} />
+          <span>Multi-Agent System Topology</span>
+        </div>
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-around text-center">
+          <div className="space-y-1">
+            <Search size={20} className="mx-auto text-blue-400" />
+            <p className="text-[10px] font-bold">Research Node</p>
+          </div>
+          <ArrowRight size={16} className="text-slate-600 animate-pulse" />
+          <div className="space-y-1">
+            <PenLine size={20} className="mx-auto text-violet-400" />
+            <p className="text-[10px] font-bold">Writer Node</p>
+          </div>
+          <ArrowRight size={16} className="text-slate-600 animate-pulse" />
+          <div className="space-y-1">
+            <ShieldCheck size={20} className="mx-auto text-emerald-400" />
+            <p className="text-[10px] font-bold">Reviewer Node</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 3: Agent Anatomy
+  if (lessonOrder === 3) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-cyan-400 font-black text-xs uppercase tracking-wider mb-2">
+          <Bot size={16} />
+          <span>Agent Anatomy Breakdown</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-slate-400">Role:</span> Senior Specialist</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-slate-400">Prompt:</span> System Rules</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-slate-400">API:</span> OpenRouter</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-slate-400">Function:</span> ask_ai(prompt)</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 4: Researcher Agent Node
+  if (lessonOrder === 4) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-wider mb-2">
+          <Search size={16} />
+          <span>Researcher Agent Node Output</span>
+        </div>
+        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/30 text-xs font-mono space-y-1.5">
+          <p className="text-blue-300 font-bold">Input: &quot;Multi-Agent Systems&quot;</p>
+          <p className="text-slate-300">✓ Fact 1: Specialist role isolation</p>
+          <p className="text-slate-300">✓ Fact 2: Shared state dict passing</p>
+          <p className="text-slate-300">✓ Fact 3: Self-healing quality retries</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 5: Writer Handoff
+  if (lessonOrder === 5) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-violet-400 font-black text-xs uppercase tracking-wider mb-2">
+          <PenLine size={16} />
+          <span>Agent-to-Agent Handoff Animation</span>
+        </div>
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[10px] text-blue-400 font-bold uppercase">Upstream Output</span>
+            <p className="font-mono text-slate-300">researcher_notes</p>
+          </div>
+          <ArrowRight className="text-violet-400 animate-pulse" size={20} />
+          <div className="space-y-1 text-right">
+            <span className="text-[10px] text-violet-400 font-bold uppercase">Downstream Input</span>
+            <p className="font-mono text-slate-300">writer(notes)</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 6: Shared State
   if (lessonOrder === 6) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
@@ -197,7 +310,24 @@ function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
     );
   }
 
-  if ([7, 8, 11].includes(lessonOrder)) {
+  // Lesson 7: Reviewer Gate
+  if (lessonOrder === 7) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-wider mb-2">
+          <ShieldCheck size={16} />
+          <span>Reviewer Quality Stamp</span>
+        </div>
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono flex items-center justify-between">
+          <span>draft_length &gt;= 20 chars</span>
+          <span className="px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-black">APPROVED</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 8: Review & Retry Loop
+  if (lessonOrder === 8) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
         <div className="flex items-center gap-2 text-rose-400 font-black text-xs uppercase tracking-wider mb-4">
@@ -213,15 +343,12 @@ function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
           <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono">
             Writer revising draft with Reviewer feedback...
           </div>
-          <div className="pt-2 flex justify-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Auto-Correction Active</span>
-          </div>
         </div>
       </div>
     );
   }
 
+  // Lesson 9: Memory Architecture
   if (lessonOrder === 9) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
@@ -249,18 +376,72 @@ function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
     );
   }
 
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
-      <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-wider mb-3">
-        <Network size={16} />
-        <span>Live Agent Handoff Flow</span>
+  // Lesson 10: LangGraph Graph Concept
+  if (lessonOrder === 10) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-wider mb-2">
+          <GitBranch size={16} />
+          <span>LangGraph StateGraph Abstraction</span>
+        </div>
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs space-y-2">
+          <p className="text-slate-400">StateGraph(LangGraphState)</p>
+          <p className="text-blue-300">.add_node(&quot;researcher&quot;, researcher_fn)</p>
+          <p className="text-violet-300">.add_edge(&quot;researcher&quot;, &quot;writer&quot;)</p>
+          <p className="text-emerald-300">.compile()</p>
+        </div>
       </div>
-      <div className="flex items-center justify-between gap-2 p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
-        <span className="text-blue-400 flex items-center gap-1.5"><Search size={14} /> Researcher</span>
-        <ArrowRight size={16} className="text-slate-500 animate-pulse" />
-        <span className="text-violet-400 flex items-center gap-1.5"><PenLine size={14} /> Writer</span>
-        <ArrowRight size={16} className="text-slate-500 animate-pulse" />
-        <span className="text-emerald-400 flex items-center gap-1.5"><ShieldCheck size={14} /> Reviewer</span>
+    );
+  }
+
+  // Lesson 11: Conditional Edge Routing
+  if (lessonOrder === 11) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-orange-400 font-black text-xs uppercase tracking-wider mb-2">
+          <GitBranch size={16} />
+          <span>Conditional Edge Track Switch</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-center">
+            If APPROVED<br /><span className="font-bold">Route to END</span>
+          </div>
+          <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-center">
+            If REJECTED<br /><span className="font-bold">Route to Writer</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 12: CrewAI Team Framework
+  if (lessonOrder === 12) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+        <div className="flex items-center gap-2 text-violet-400 font-black text-xs uppercase tracking-wider mb-2">
+          <Users size={16} />
+          <span>CrewAI Enterprise Abstractions</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-violet-400 font-bold">Agent:</span> Role + Goal</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-blue-400 font-bold">Task:</span> Description</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-emerald-400 font-bold">Crew:</span> Team Array</div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800"><span className="text-amber-400 font-bold">Process:</span> Sequential</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lesson 13: Final Capstone Pipeline
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl space-y-3">
+      <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-wider mb-2">
+        <Sparkles size={16} />
+        <span>Capstone Pipeline Execution Success</span>
+      </div>
+      <div className="p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-xs font-mono text-center text-emerald-300 space-y-1">
+        <p className="font-bold">🎉 MULTI-AGENT PIPELINE COMPLETE!</p>
+        <p className="text-[10px] text-slate-400">Researcher $\rightarrow$ Writer $\rightarrow$ Reviewer $\rightarrow$ Approved State</p>
       </div>
     </div>
   );
