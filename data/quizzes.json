@@ -1,0 +1,77 @@
+[
+  {
+    "id": "quiz_001",
+    "lessonId": "lesson_02",
+    "title": "Multi-Agent Foundations",
+    "questions": [
+      {"id":"q1","question":"What makes a multi-agent system different from one AI prompt?","options":["Specialist roles coordinate through handoffs","It always uses more computers","It has no shared goal","It cannot use tools"],"correctAnswer":0,"explanation":"A multi-agent workflow divides responsibility between specialist roles and coordinates their outputs."},
+      {"id":"q2","question":"Why give agents clear roles?","options":["To increase confusion","To create focused responsibilities","To remove the goal","To avoid all communication"],"correctAnswer":1,"explanation":"Focused responsibilities make prompts, outputs, and evaluation clearer."},
+      {"id":"q3","question":"What is a handoff?","options":["Deleting prior work","Passing useful output to the next agent","Ending every workflow","Changing a password"],"correctAnswer":1,"explanation":"A handoff transfers structured work or state from one specialist to another."},
+      {"id":"q4","question":"Which item should all agents understand?","options":["The shared goal","A random secret","Every CSS class","The leaderboard password"],"correctAnswer":0,"explanation":"Specialists may differ, but they must stay aligned on the shared goal."},
+      {"id":"q5","question":"What reduces duplicated work between agents?","options":["Shared structured state","Longer names","More browser tabs","Ignoring outputs"],"correctAnswer":0,"explanation":"Shared structured state lets each agent build on confirmed prior results."}
+    ],
+    "timeLimit": 30,
+    "reward": 10,
+    "speedRewards": [50,30,20]
+  },
+  {
+    "id": "quiz_002",
+    "lessonId": "lesson_06",
+    "title": "State and Memory",
+    "questions": [
+      {"id":"q1","question":"Where should completed research be stored for the Writer?","options":["Shared state","Deleted immediately","Only on the leaderboard","Inside CSS"],"correctAnswer":0,"explanation":"Shared state makes the researcher output available to downstream agents."},
+      {"id":"q2","question":"What belongs in short-term workflow state?","options":["Relevant task context","Every historical log forever","Unrelated passwords","Nothing"],"correctAnswer":0,"explanation":"State should carry only the context needed to complete the current workflow."},
+      {"id":"q3","question":"Why use named state fields?","options":["They make handoffs predictable","They slow the workflow","They remove validation","They hide all data"],"correctAnswer":0,"explanation":"Named fields form a clear contract between agents."},
+      {"id":"q4","question":"What should happen before trusting an agent output?","options":["Validate its shape and meaning","Award coins","Delete it","Rename the browser"],"correctAnswer":0,"explanation":"Validation prevents malformed or irrelevant output entering shared state."},
+      {"id":"q5","question":"Which is the safest memory rule?","options":["Store only useful, permitted context","Store all personal data","Never expire anything","Let students edit server state"],"correctAnswer":0,"explanation":"Minimizing retained context improves privacy and reliability."}
+    ],
+    "timeLimit": 30,
+    "reward": 10,
+    "speedRewards": [50,30,20]
+  },
+  {
+    "id": "quiz_003",
+    "lessonId": "lesson_08",
+    "title": "Review and Recovery",
+    "questions": [
+      {"id":"q1","question":"What should happen when the Reviewer rejects a draft?","options":["Send feedback to the Writer","End without feedback","Delete research","Restart the computer"],"correctAnswer":0,"explanation":"A useful review loop returns specific feedback to the producing agent."},
+      {"id":"q2","question":"What makes reviewer feedback actionable?","options":["Specific criteria and required changes","Only saying bad","No explanation","Random emojis"],"correctAnswer":0,"explanation":"Specific criteria tell the Writer exactly what must improve."},
+      {"id":"q3","question":"Why set a retry limit?","options":["To prevent infinite loops","To make code longer","To hide errors","To remove quality checks"],"correctAnswer":0,"explanation":"A retry limit gives the workflow a safe stopping condition."},
+      {"id":"q4","question":"What is a good approval output?","options":["A structured decision plus reason","An empty string","A hidden variable","A random number"],"correctAnswer":0,"explanation":"Structured decisions are easy for the graph to route and audit."},
+      {"id":"q5","question":"If every retry fails, what should the workflow do?","options":["Escalate or return a clear failure","Loop forever","Pretend success","Award a reward"],"correctAnswer":0,"explanation":"A controlled escalation preserves safety and makes failure visible."}
+    ],
+    "timeLimit": 30,
+    "reward": 10,
+    "speedRewards": [50,30,20]
+  },
+  {
+    "id": "quiz_004",
+    "lessonId": "lesson_10",
+    "title": "LangGraph Routing",
+    "questions": [
+      {"id":"q1","question":"In LangGraph, what connects nodes?","options":["Edges","Coins","Passwords","CSS classes"],"correctAnswer":0,"explanation":"Edges define how execution moves between nodes."},
+      {"id":"q2","question":"What does a node normally represent?","options":["A unit of work","A leaderboard row","A browser cookie","A color"],"correctAnswer":0,"explanation":"Each node performs a defined operation on workflow state."},
+      {"id":"q3","question":"When are conditional edges useful?","options":["When the next step depends on state","When every route is identical","Only for styling","Never"],"correctAnswer":0,"explanation":"Conditional edges route execution using a decision in the current state."},
+      {"id":"q4","question":"Why compile a graph?","options":["To produce an executable workflow","To award coins","To erase nodes","To create an email"],"correctAnswer":0,"explanation":"Compilation validates and prepares the graph for invocation."},
+      {"id":"q5","question":"What should a graph expose at the end?","options":["A clear final state or result","Private API keys","Infinite retries","Unrelated logs"],"correctAnswer":0,"explanation":"A clear final state lets callers consume and verify the result."}
+    ],
+    "timeLimit": 30,
+    "reward": 10,
+    "speedRewards": [50,30,20]
+  },
+  {
+    "id": "quiz_005",
+    "lessonId": "lesson_12",
+    "title": "CrewAI Roles and Tasks",
+    "questions": [
+      {"id":"q1","question":"Which description best fits CrewAI?","options":["A role-and-task collaboration framework","A database","A browser","A Python type"],"correctAnswer":0,"explanation":"CrewAI organizes agents, assigned tasks, and collaboration."},
+      {"id":"q2","question":"What should an agent role describe?","options":["Its responsibility and expertise","Its favorite color","A password","The final rank"],"correctAnswer":0,"explanation":"The role focuses the agent on a defined contribution."},
+      {"id":"q3","question":"What should a task include?","options":["A clear expected output","No goal","Only a name","A secret key"],"correctAnswer":0,"explanation":"Expected output makes completion measurable and handoffs reliable."},
+      {"id":"q4","question":"What does process order control?","options":["How tasks are delegated and executed","The page color","Student login","Coin storage"],"correctAnswer":0,"explanation":"Process configuration determines the crew's execution flow."},
+      {"id":"q5","question":"What is a good final check before kickoff?","options":["Roles, tasks, tools, and outputs align","Every agent has the same role","No task has criteria","The API key is shown to students"],"correctAnswer":0,"explanation":"Alignment across roles, tasks, tools, and outputs prevents gaps."}
+    ],
+    "timeLimit": 30,
+    "reward": 10,
+    "speedRewards": [50,30,20]
+  }
+]

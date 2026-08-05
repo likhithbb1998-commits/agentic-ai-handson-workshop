@@ -1,0 +1,41 @@
+[
+  {
+    "id": "challenge_001",
+    "lessonId": "lesson_04",
+    "type": "code",
+    "title": "Build a Topic Intake Agent",
+    "prompt": "Transfer what you learned: create topic_agent(topic). It must remove spaces around the topic and return READY: followed by the cleaned topic. Example: topic_agent(\"  AI safety  \") returns \"READY: AI safety\".",
+    "starterCode": "# Build a new agent function — this is different from the trainer example.\n",
+    "expectedPattern": "^def\\s+topic_agent\\s*\\(\\s*topic\\s*\\)\\s*:",
+    "testCode": "assert topic_agent(\"  AI safety  \") == \"READY: AI safety\"\nassert topic_agent(\"Robotics\") == \"READY: Robotics\"",
+    "reward": 100,
+    "firstReward": 200,
+    "timeLimit": 240
+  },
+  {
+    "id": "challenge_002",
+    "lessonId": "lesson_07",
+    "type": "debug",
+    "title": "Repair the Quality Gate",
+    "prompt": "Fix quality_gate so scores of 7 or more return APPROVED and lower scores return REVISE. Both hidden cases must pass.",
+    "starterCode": "def quality_gate(score):\n    if score > 7:\n        return \"REVISE\"\n    return \"APPROVED\"\n",
+    "expectedPattern": "def\\s+quality_gate\\s*\\(\\s*score\\s*\\)",
+    "testCode": "assert quality_gate(7) == \"APPROVED\"\nassert quality_gate(6) == \"REVISE\"\nassert quality_gate(10) == \"APPROVED\"",
+    "reward": 100,
+    "firstReward": 200,
+    "timeLimit": 240
+  },
+  {
+    "id": "challenge_003",
+    "lessonId": "lesson_13",
+    "type": "final",
+    "title": "Create a Handoff Summary",
+    "prompt": "Create handoff_summary(agent, result) that returns a dictionary with the exact keys agent, result, and ready. ready must be True.",
+    "starterCode": "# Package an agent result for the next specialist.\n",
+    "expectedPattern": "^def\\s+handoff_summary\\s*\\(\\s*agent\\s*,\\s*result\\s*\\)\\s*:",
+    "testCode": "assert handoff_summary(\"researcher\", \"3 facts\") == {\"agent\": \"researcher\", \"result\": \"3 facts\", \"ready\": True}\nassert handoff_summary(\"reviewer\", \"approved\")[\"ready\"] is True",
+    "reward": 300,
+    "firstReward": 400,
+    "timeLimit": 360
+  }
+]

@@ -1,0 +1,5 @@
+[
+  {"id":"poll_001","lessonId":"lesson_01","question":"Which approach is most reliable for a complex AI project?","options":["One vague prompt for everything","Specialists with clear handoffs","No validation at all","Saving every secret in prompts"],"reward":5,"correctAnswer":1,"explanation":"Clear specialist roles and validated handoffs reduce ambiguity and make failures easier to diagnose."},
+  {"id":"poll_002","lessonId":"lesson_09","question":"What should an agent remember between tasks?","options":["Everything forever","Only relevant, permitted context","Nothing under any circumstance","Every raw system log"],"reward":5,"correctAnswer":1,"explanation":"Useful memory is selective: keep relevant context, respect permissions, and avoid unnecessary retention."},
+  {"id":"poll_003","lessonId":"lesson_12","question":"What is the best first step when a multi-agent workflow fails?","options":["Add more agents immediately","Inspect the state and failed handoff","Hide the error","Award the workflow anyway"],"reward":5,"correctAnswer":1,"explanation":"Inspecting state and the failed handoff reveals whether the issue is routing, data shape, or agent output."}
+]

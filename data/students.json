@@ -1,0 +1,27 @@
+[
+  {
+    "id": "student_48e985fc",
+    "usn": "4MC20IS401",
+    "name": "likhith",
+    "email": "likhithb98@gmail.com",
+    "coins": 105,
+    "xp": 105,
+    "rank": 1,
+    "completedChallenges": 0,
+    "completedChallengeIds": [],
+    "completedSimulatorIds": [],
+    "pollIds": [
+      "poll_001"
+    ],
+    "quizIds": [
+      "quiz_001"
+    ],
+    "quizScore": 1,
+    "currentLesson": "lesson_03",
+    "participation": 2,
+    "rewardEligible": true,
+    "rewardStatus": "pending",
+    "joinedAt": "2026-08-04T22:38:39.281Z",
+    "lastSeenAt": "2026-08-04T23:11:39.790Z"
+  }
+]
