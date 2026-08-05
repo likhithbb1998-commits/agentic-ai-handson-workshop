@@ -26,8 +26,24 @@ export function WorkshopProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch("/api/workshop", { cache: "no-store" });
       if (!response.ok) throw new Error("Unable to load the live workshop.");
-      const data = await response.json();
-      setSnapshot(data);
+      const data: Snapshot = await response.json();
+      
+      setSnapshot((prev) => {
+        if (!prev) return data;
+        
+        // Smart non-destructive merge for student accounts across serverless polling
+        const mergedStudentsMap = new Map(prev.students.map((s) => [s.id, s]));
+        for (const incoming of data.students || []) {
+          mergedStudentsMap.set(incoming.id, incoming);
+        }
+
+        const mergedStudents = Array.from(mergedStudentsMap.values()).sort((a, b) => (b.coins || 0) - (a.coins || 0));
+
+        return {
+          ...data,
+          students: mergedStudents,
+        };
+      });
       setError("");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load the workshop.");
