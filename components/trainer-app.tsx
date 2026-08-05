@@ -267,7 +267,7 @@ function LiveTeaching({
           }}
         />
       )}
-      {snapshot.session.activity === "simulator" && <AgentSimulator />}
+      {snapshot.session.activity === "simulator" && <AgentSimulator trainer />}
       {snapshot.session.activity === "quiz" && (
         <QuizActivity trainer quiz={quiz} session={snapshot.session} onNext={() => act({ action: "NEXT_QUIZ_QUESTION" })} />
       )}
