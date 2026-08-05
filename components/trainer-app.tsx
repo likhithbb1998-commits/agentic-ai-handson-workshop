@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Award,
@@ -11,14 +11,18 @@ import {
   CirclePlay,
   Clock3,
   Download,
+  Edit2,
   Gift,
   MessageSquare,
+  Plus,
   Radio,
   Search,
   Send,
   Star,
+  Trash2,
   Trophy,
   Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useWorkshop } from "@/components/workshop-provider";
@@ -38,6 +42,26 @@ import {
 export function TrainerApp() {
   const pathname = usePathname();
   const { snapshot, loading, connected, error, act, runCode } = useWorkshop();
+
+  // Synchronized Trainer Scroll Broadcast
+  useEffect(() => {
+    let timer: number;
+    function handleScroll() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollHeight > 0) {
+          const pct = Math.round((window.scrollY / scrollHeight) * 100);
+          void act({ action: "UPDATE_SCROLL", scrollPosition: pct });
+        }
+      }, 150);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [act]);
 
   if (loading || !snapshot) return <LoadingScreen />;
 
@@ -298,47 +322,47 @@ function LiveTeaching({
 function AiModelCard() {
   const [prompt, setPrompt] = useState("Explain the current multi-agent concept in one classroom-friendly example.");
   const [result, setResult] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function ask() {
-    setBusy(true);
-    setResult("");
+    setLoading(true);
     const response = await fetch("/api/ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     });
-    const data = await response.json().catch(() => ({}));
-    setResult(response.ok ? `${data.text}\n\nModel: ${data.model}` : data.error || "Model connection failed.");
-    setBusy(false);
+    const data = await response.json();
+    setLoading(false);
+    setResult(data.answer || data.error || "No answer generated.");
   }
 
   return (
-    <section className="rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-xl bg-violet-100 text-violet-700">
-          <Bot size={19} />
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center gap-2">
+        <span className="grid size-9 place-items-center rounded-xl bg-violet-50 text-violet-600">
+          <Bot size={18} />
         </span>
         <div>
           <p className="eyebrow">Trainer only</p>
-          <h2 className="font-black text-slate-900">OpenRouter model</h2>
+          <h3 className="text-sm font-black text-slate-900">OpenRouter model</h3>
         </div>
       </div>
       <textarea
         value={prompt}
         onChange={(event) => setPrompt(event.target.value)}
-        className="mt-4 min-h-24 w-full resize-y rounded-xl border border-slate-200 p-3 text-sm leading-6 outline-none focus:border-violet-400"
+        rows={3}
+        className="mt-4 w-full rounded-xl border border-slate-200 p-3 text-xs leading-5 text-slate-800 outline-none focus:border-blue-500"
       />
-      <button onClick={ask} disabled={busy || prompt.trim().length < 2} className="primary-button mt-3 w-full">
-        <Send size={15} />
-        {busy ? "Connecting…" : "Ask model"}
+      <button
+        onClick={ask}
+        disabled={loading}
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-black text-white hover:bg-blue-500 disabled:opacity-50"
+      >
+        <Send size={14} />
+        {loading ? "Generating explanation..." : "Ask model"}
       </button>
-      {result && (
-        <pre className="mt-3 max-h-52 overflow-auto whitespace-pre-wrap rounded-xl bg-slate-950 p-3 text-xs leading-5 text-slate-200">
-          {result}
-        </pre>
-      )}
-      <p className="mt-3 text-xs leading-5 text-slate-500">
+      {result && <div className="mt-4 rounded-xl bg-slate-950 p-4 text-xs leading-5 text-slate-200">{result}</div>}
+      <p className="mt-3 text-[10px] text-slate-400">
         Server-side only. Students and projector never receive the API key or this panel.
       </p>
     </section>
@@ -347,6 +371,18 @@ function AiModelCard() {
 
 function StudentManagement({ students, act }: { students: Student[]; act: Act }) {
   const [query, setQuery] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+
+  // Form State
+  const [name, setName] = useState("");
+  const [usn, setUsn] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [coins, setCoins] = useState(100);
+  const [xp, setXp] = useState(100);
+  const [busy, setBusy] = useState(false);
+
   const filtered = useMemo(
     () =>
       students.filter((student) =>
@@ -355,12 +391,69 @@ function StudentManagement({ students, act }: { students: Student[]; act: Act })
     [students, query]
   );
 
+  function openCreate() {
+    setName("");
+    setUsn("");
+    setEmail("");
+    setPassword("workshop123");
+    setCoins(100);
+    setXp(100);
+    setEditingStudent(null);
+    setShowCreateModal(true);
+  }
+
+  function openEdit(student: Student) {
+    setEditingStudent(student);
+    setName(student.name);
+    setUsn(student.usn);
+    setEmail(student.email);
+    setPassword(student.password || "workshop123");
+    setCoins(student.coins);
+    setXp(student.xp);
+    setShowCreateModal(true);
+  }
+
+  async function handleSave() {
+    if (!name || !usn || !email) return;
+    setBusy(true);
+    if (editingStudent) {
+      await act({
+        action: "UPDATE_STUDENT",
+        id: editingStudent.id,
+        name,
+        usn,
+        email,
+        password,
+        coins,
+        xp,
+      });
+    } else {
+      await act({
+        action: "CREATE_STUDENT",
+        name,
+        usn,
+        email,
+        password,
+        coins,
+        xp,
+      });
+    }
+    setBusy(false);
+    setShowCreateModal(false);
+  }
+
+  async function handleDelete(student: Student) {
+    if (window.confirm(`Are you sure you want to delete ${student.name} (${student.usn})?`)) {
+      await act({ action: "DELETE_STUDENT", studentId: student.id });
+    }
+  }
+
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-5">
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
           <p className="eyebrow">Student Management & Performance Matrix</p>
-          <h2 className="mt-1 text-xl font-black text-slate-900">Student Directory & Calculated Scores</h2>
+          <h2 className="mt-1 text-xl font-black text-slate-900">Student Directory & Full CRUD Controls</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2">
@@ -369,12 +462,19 @@ function StudentManagement({ students, act }: { students: Student[]; act: Act })
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search USN, name, Gmail"
-              className="w-56 text-sm outline-none"
+              className="w-48 text-sm outline-none"
             />
           </label>
           <button
+            onClick={openCreate}
+            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-500 shadow-sm"
+          >
+            <Plus size={16} />
+            Add Student
+          </button>
+          <button
             onClick={() => exportPerformanceCSV(students)}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-black text-white hover:bg-blue-500 shadow-sm"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white hover:bg-blue-500 shadow-sm"
           >
             <Download size={15} />
             Export Performance (CSV)
@@ -396,7 +496,7 @@ function StudentManagement({ students, act }: { students: Student[]; act: Act })
                 "Challenges",
                 "Simulators",
                 "Participation",
-                "Quick Award",
+                "Actions",
               ].map((heading) => (
                 <th key={heading} className="px-5 py-3">
                   {heading}
@@ -436,18 +536,26 @@ function StudentManagement({ students, act }: { students: Student[]; act: Act })
                   <td className="px-5 py-4 text-slate-600 font-semibold">{student.completedSimulatorIds?.length || 0}</td>
                   <td className="px-5 py-4 text-slate-600 font-semibold">{student.participation} pts</td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-1">
+                    <div className="flex items-center gap-1.5">
                       <button
-                        onClick={() => act({ action: "AWARD_COINS", studentId: student.id, amount: 25 })}
-                        className="rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-black text-emerald-700 hover:bg-emerald-100"
+                        onClick={() => openEdit(student)}
+                        className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition"
+                        title="Edit Student"
                       >
-                        +25
+                        <Edit2 size={15} />
                       </button>
                       <button
-                        onClick={() => act({ action: "AWARD_COINS", studentId: student.id, amount: -25 })}
-                        className="rounded-lg bg-rose-50 px-2.5 py-1.5 text-xs font-black text-rose-700 hover:bg-rose-100"
+                        onClick={() => handleDelete(student)}
+                        className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 transition"
+                        title="Delete Student"
                       >
-                        −25
+                        <Trash2 size={15} />
+                      </button>
+                      <button
+                        onClick={() => act({ action: "AWARD_COINS", studentId: student.id, amount: 25 })}
+                        className="rounded-lg bg-emerald-50 px-2 py-1 text-[11px] font-black text-emerald-700 hover:bg-emerald-100"
+                      >
+                        +25
                       </button>
                     </div>
                   </td>
@@ -458,6 +566,101 @@ function StudentManagement({ students, act }: { students: Student[]; act: Act })
         </table>
       </div>
       {!filtered.length && <div className="p-12 text-center text-sm text-slate-400">No students match this view.</div>}
+
+      {/* CRUD Modal for Add / Edit Student */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="text-lg font-black text-slate-900">
+                {editingStudent ? "Edit Student Details" : "Add New Student"}
+              </h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs font-bold text-slate-700">
+              <div>
+                <label className="block mb-1">Student Full Name</label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Likhith Kumar"
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">USN Registration Number</label>
+                <input
+                  value={usn}
+                  onChange={(e) => setUsn(e.target.value)}
+                  placeholder="e.g. 4MC20IS401"
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-blue-500 uppercase"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Gmail Email Address</label>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. student@gmail.com"
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Password</label>
+                <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="workshop123"
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1">Coins</label>
+                  <input
+                    type="number"
+                    value={coins}
+                    onChange={(e) => setCoins(Number(e.target.value))}
+                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">XP Points</label>
+                  <input
+                    type="number"
+                    value={xp}
+                    onChange={(e) => setXp(Number(e.target.value))}
+                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex gap-2">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="w-full rounded-xl border border-slate-200 py-2.5 text-xs font-black text-slate-600 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={busy || !name || !usn || !email}
+                className="w-full rounded-xl bg-blue-600 py-2.5 text-xs font-black text-white hover:bg-blue-500 disabled:opacity-50"
+              >
+                {busy ? "Saving..." : editingStudent ? "Update Student" : "Create Student"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -569,7 +772,7 @@ function StudentFeedbackView({ feedbacks, students }: { feedbacks: Feedback[]; s
 
                 {fb.comments && (
                   <p className="text-xs leading-6 text-slate-700 italic border-l-2 border-slate-300 pl-3">
-                    "{fb.comments}"
+                    &quot;{fb.comments}&quot;
                   </p>
                 )}
 
@@ -654,67 +857,40 @@ function RewardManagement({
   act: Act;
 }) {
   return (
-    <div className="grid gap-5 xl:grid-cols-[1fr_.85fr]">
-      <div className="space-y-4">
-        <div className="flex justify-end">
+    <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-5">
+          <div>
+            <p className="eyebrow">Rewards Management</p>
+            <h2 className="mt-1 text-xl font-black text-slate-900">Leaderboard Rewards & Badges</h2>
+          </div>
           <button
             onClick={() => exportLeaderboardCSV(students)}
-            className="flex items-center gap-2 rounded-xl bg-amber-600 px-4 py-2 text-xs font-black text-white hover:bg-amber-500 shadow-sm"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-black text-white hover:bg-blue-500 shadow-sm"
           >
-            <Download size={14} />
+            <Download size={15} />
             Export Leaderboard (CSV)
           </button>
         </div>
-        <Leaderboard students={students} limit={Math.max(5, students.length)} />
-      </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-amber-600">
-            <Gift size={20} />
-          </span>
-          <div>
-            <p className="eyebrow">Trainer confirmation</p>
-            <h2 className="text-xl font-black text-slate-900">Top 5 rewards</h2>
-          </div>
+        <div className="p-5">
+          <Leaderboard students={students} limit={Math.max(10, students.length)} />
         </div>
-        <div className="mt-6 space-y-3">
-          {rewards.map((reward) => {
-            const student = students[reward.rank - 1];
-            return (
-              <div key={reward.rank} className="rounded-xl border border-slate-200 p-4">
-                <div className="flex items-start gap-3">
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-100 text-xs font-black">
-                    #{reward.rank}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-black text-slate-800">{student?.name || "Open position"}</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">{reward.label}</p>
-                  </div>
-                  {student && (
-                    <button
-                      onClick={() =>
-                        act({
-                          action: "MARK_REWARD",
-                          studentId: student.id,
-                          status: student.rewardStatus === "rewarded" ? "pending" : "rewarded",
-                        })
-                      }
-                      className={`rounded-lg px-3 py-2 text-xs font-black ${
-                        student.rewardStatus === "rewarded" ? "bg-emerald-50 text-emerald-700" : "bg-blue-600 text-white"
-                      }`}
-                    >
-                      {student.rewardStatus === "rewarded" ? "Rewarded" : "Mark given"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 text-amber-600">
+          <Gift size={20} />
+          <h3 className="font-black text-slate-900">Reward Milestones</h3>
         </div>
-        <p className="mt-5 text-xs leading-5 text-slate-500">
-          No course is promised or issued automatically. Only this trainer action changes reward status.
-        </p>
+        <div className="space-y-3">
+          {rewards.map((r) => (
+            <div key={r.rank} className="flex items-center justify-between rounded-xl border border-slate-200 p-3 text-xs">
+              <span className="font-black text-slate-800">Rank #{r.rank}</span>
+              <span className="rounded-full bg-amber-50 px-3 py-1 font-bold text-amber-800">{r.label}</span>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

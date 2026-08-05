@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getIdentity } from "@/lib/auth";
-import { awardCoins, broadcast, getSnapshot, saveRankedStudents, submitFeedback, updateSession } from "@/lib/workshop";
+import { awardCoins, broadcast, deleteStudent, getSnapshot, saveRankedStudents, submitFeedback, updateSession, updateStudent, upsertStudent } from "@/lib/workshop";
 import { updateJson } from "@/lib/db";
 import type { Student } from "@/lib/types";
 import { executePython, forbiddenPython } from "@/lib/python-runner";
@@ -11,6 +11,7 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("SET_LESSON"), lessonId: z.string().max(40) }),
   z.object({ action: z.literal("SET_STEP"), step: z.number().int().min(0).max(100) }),
   z.object({ action: z.literal("UPDATE_LIVE_CODE"), code: z.string().max(10000) }),
+  z.object({ action: z.literal("UPDATE_SCROLL"), scrollPosition: z.number() }),
   z.object({ action: z.literal("SET_ACTIVITY"), activity: z.enum(["theory", "code", "simulator", "quiz", "poll", "challenge", "leaderboard"]) }),
   z.object({ action: z.literal("START_QUIZ"), quizId: z.string().max(40) }),
   z.object({ action: z.literal("NEXT_QUIZ_QUESTION") }),
@@ -22,6 +23,26 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("COMPLETE_SIMULATOR"), lessonId: z.string().max(40) }),
   z.object({ action: z.literal("AWARD_COINS"), studentId: z.string().max(80), amount: z.number().int().min(-1000).max(1000) }),
   z.object({ action: z.literal("MARK_REWARD"), studentId: z.string().max(80), status: z.enum(["pending", "rewarded"]) }),
+  z.object({
+    action: z.literal("CREATE_STUDENT"),
+    name: z.string().max(100),
+    usn: z.string().max(50),
+    email: z.string().max(100),
+    password: z.string().max(100).optional(),
+    coins: z.number().optional(),
+    xp: z.number().optional(),
+  }),
+  z.object({
+    action: z.literal("UPDATE_STUDENT"),
+    id: z.string().max(100),
+    name: z.string().max(100),
+    usn: z.string().max(50),
+    email: z.string().max(100),
+    password: z.string().max(100).optional(),
+    coins: z.number().optional(),
+    xp: z.number().optional(),
+  }),
+  z.object({ action: z.literal("DELETE_STUDENT"), studentId: z.string().max(100) }),
   z.object({
     action: z.literal("SUBMIT_FEEDBACK"),
     rating: z.number().int().min(1).max(5),
@@ -54,7 +75,7 @@ export async function POST(request: Request) {
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid workshop action." }, { status: 400 });
   const input = parsed.data;
-  const trainerActions = ["START_SESSION", "SET_LESSON", "SET_STEP", "UPDATE_LIVE_CODE", "SET_ACTIVITY", "START_QUIZ", "NEXT_QUIZ_QUESTION", "START_POLL", "START_CHALLENGE", "AWARD_COINS", "MARK_REWARD"];
+  const trainerActions = ["START_SESSION", "SET_LESSON", "SET_STEP", "UPDATE_LIVE_CODE", "UPDATE_SCROLL", "SET_ACTIVITY", "START_QUIZ", "NEXT_QUIZ_QUESTION", "START_POLL", "START_CHALLENGE", "AWARD_COINS", "MARK_REWARD", "CREATE_STUDENT", "UPDATE_STUDENT", "DELETE_STUDENT"];
   if (trainerActions.includes(input.action) && identity?.role !== "trainer") return NextResponse.json({ error: "Trainer access required." }, { status: 403 });
   if (["ANSWER_QUIZ", "ANSWER_POLL", "COMPLETE_CHALLENGE", "COMPLETE_SIMULATOR", "SUBMIT_FEEDBACK"].includes(input.action) && identity?.role !== "student") return NextResponse.json({ error: "Student session required." }, { status: 403 });
 
@@ -67,17 +88,20 @@ export async function POST(request: Request) {
       broadcast("LESSON_CHANGED"); break;
     case "SET_LESSON":
       if (!snapshot.lessons.some((lesson) => lesson.id === input.lessonId)) return NextResponse.json({ error: "Lesson not found." }, { status: 404 });
-      await updateSession((session) => ({ ...session, lessonId: input.lessonId, codeStep: 0, liveCode: "", codeOutput: null, activity: "theory", winnerMessage: null, celebration: null }));
+      await updateSession((session) => ({ ...session, lessonId: input.lessonId, codeStep: 0, liveCode: "", codeOutput: null, activity: "theory", winnerMessage: null, celebration: null, scrollPosition: 0 }));
       await updateJson<Student[]>("students.json", (current) => current.map((student) => ({ ...student, currentLesson: input.lessonId })));
       broadcast("LESSON_CHANGED", { lessonId: input.lessonId }); break;
     case "SET_STEP":
-      await updateSession((session) => ({ ...session, codeStep: input.step, activity: "code" }));
+      await updateSession((session) => ({ ...session, codeStep: input.step, activity: "code", scrollPosition: 0 }));
       broadcast("CODE_STEP_CHANGED", { step: input.step }); break;
     case "UPDATE_LIVE_CODE":
       await updateSession((session) => ({ ...session, liveCode: input.code, activity: "code" }));
       broadcast("LIVE_CODE_UPDATED", { code: input.code }); break;
+    case "UPDATE_SCROLL":
+      await updateSession((session) => ({ ...session, scrollPosition: input.scrollPosition }));
+      broadcast("SCROLL_UPDATED", { scrollPosition: input.scrollPosition }); break;
     case "SET_ACTIVITY":
-      await updateSession((session) => ({ ...session, activity: input.activity, celebration: null }));
+      await updateSession((session) => ({ ...session, activity: input.activity, celebration: null, scrollPosition: 0 }));
       broadcast("ACTIVITY_CHANGED", { activity: input.activity }); break;
     case "START_QUIZ": { const quiz = snapshot.quizzes.find((item) => item.id === input.quizId); if (!quiz) return NextResponse.json({ error: "Quiz not found." }, { status: 404 });
       await updateSession((session) => ({ ...session, activity: "quiz", activeQuizId: quiz.id, quizQuestionIndex: 0, activePollId: null, activeChallengeId: null, activityStartedAt: now.toISOString(), timerEndsAt: new Date(now.getTime() + quiz.timeLimit * 1000).toISOString(), quizAnswers: [], winnerMessage: null, celebration: null }));
@@ -100,6 +124,21 @@ export async function POST(request: Request) {
     case "MARK_REWARD": {
       const students = await updateJson<Student[]>("students.json", (current) => current.map((student) => student.id === input.studentId ? { ...student, rewardEligible: true, rewardStatus: input.status } : student));
       await saveRankedStudents(students); broadcast("REWARD_AWARDED", input); break; }
+    case "CREATE_STUDENT": {
+      const created = await upsertStudent({ name: input.name, usn: input.usn, email: input.email, password: input.password });
+      if (input.coins !== undefined || input.xp !== undefined) {
+        await updateStudent({ id: created.id, name: created.name, usn: created.usn, email: created.email, coins: input.coins, xp: input.xp });
+      }
+      broadcast("STUDENT_CREATED", { studentId: created.id }); break;
+    }
+    case "UPDATE_STUDENT": {
+      await updateStudent({ id: input.id, name: input.name, usn: input.usn, email: input.email, password: input.password, coins: input.coins, xp: input.xp });
+      broadcast("STUDENT_UPDATED", { studentId: input.id }); break;
+    }
+    case "DELETE_STUDENT": {
+      await deleteStudent(input.studentId);
+      broadcast("STUDENT_DELETED", { studentId: input.studentId }); break;
+    }
     case "ANSWER_QUIZ": {
       const studentId = identity!.role === "student" ? identity!.studentId : "";
       const quiz = snapshot.quizzes.find((item) => item.id === snapshot.session.activeQuizId);

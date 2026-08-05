@@ -147,6 +147,7 @@ export type WorkshopSession = {
   winnerMessage: string | null;
   celebration: Celebration | null;
   broadcastVersion?: number;
+  scrollPosition?: number;
   lastEvent?: string | null;
   lastPayload?: Record<string, unknown> | null;
   updatedAt: string;

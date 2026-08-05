@@ -124,6 +124,43 @@ export async function upsertStudent(data: { name: string; usn: string; email: st
   return newStudent;
 }
 
+export async function updateStudent(input: {
+  id: string;
+  name: string;
+  usn: string;
+  email: string;
+  password?: string;
+  coins?: number;
+  xp?: number;
+}) {
+  const students = await readJson<Student[]>("students.json");
+  const existing = students.find((s) => s.id === input.id);
+  if (!existing) throw new Error("Student not found.");
+
+  const updatedStudents = students.map((s) => {
+    if (s.id !== input.id) return s;
+    return {
+      ...s,
+      name: input.name.trim(),
+      usn: input.usn.trim().toUpperCase(),
+      email: input.email.trim().toLowerCase(),
+      password: input.password ? input.password.trim() : s.password,
+      coins: input.coins !== undefined ? input.coins : s.coins,
+      xp: input.xp !== undefined ? input.xp : s.xp,
+    };
+  });
+
+  await saveRankedStudents(updatedStudents);
+  return updatedStudents;
+}
+
+export async function deleteStudent(studentId: string) {
+  const students = await readJson<Student[]>("students.json");
+  const filtered = students.filter((s) => s.id !== studentId);
+  await saveRankedStudents(filtered);
+  return filtered;
+}
+
 export async function submitFeedback(input: {
   studentId: string;
   rating: number;

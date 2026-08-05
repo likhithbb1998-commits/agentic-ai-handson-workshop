@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { CheckCircle2, Coins, MessageSquare, Radio, Send, Star, Trophy } from "lucide-react";
 import { useWorkshop } from "@/components/workshop-provider";
@@ -14,6 +14,17 @@ import type { Lesson, Student } from "@/lib/types";
 export function StudentApp() {
   const pathname = usePathname();
   const { snapshot, loading, connected, error, act, runCode } = useWorkshop();
+
+  // Auto-scroll sync to match trainer scroll position live
+  useEffect(() => {
+    if (snapshot?.session?.scrollPosition !== undefined && snapshot.session.scrollPosition !== null) {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        const targetY = (snapshot.session.scrollPosition / 100) * scrollHeight;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+    }
+  }, [snapshot?.session?.scrollPosition]);
 
   if (loading || !snapshot) return <LoadingScreen />;
 
