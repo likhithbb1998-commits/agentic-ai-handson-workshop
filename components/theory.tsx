@@ -3,16 +3,23 @@
 import Image from "next/image";
 import {
   ArrowDown,
+  ArrowRight,
   BookOpen,
   Bot,
   Building2,
   CheckCircle2,
   CheckSquare2,
   Cpu,
+  Database,
+  FileText,
+  GitBranch,
   HelpCircle,
+  Layers,
   Lightbulb,
+  Network,
   NotebookText,
   PenLine,
+  RefreshCw,
   Search,
   ShieldCheck,
   Sparkles,
@@ -24,7 +31,7 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
   const visual = theoryVisual(lesson.order);
 
   return (
-    <div className="grid gap-6 2xl:grid-cols-[1fr_.85fr]">
+    <div className="grid gap-6 2xl:grid-cols-[1fr_.9fr]">
       <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
         {/* Header */}
         <div>
@@ -51,8 +58,8 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
           </div>
         )}
 
-        {/* Visual Graphic */}
-        <figure className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+        {/* Visual Graphic with Animated Badges */}
+        <figure className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2 shadow-inner">
           <Image
             unoptimized
             priority
@@ -61,9 +68,9 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
             width={1536}
             height={1024}
             sizes="(max-width: 1280px) 100vw, 760px"
-            className="aspect-[16/8] w-full object-cover"
+            className="aspect-[16/8] w-full rounded-xl object-cover opacity-90 transition hover:opacity-100"
           />
-          <figcaption className="border-t border-slate-200 px-4 py-3 text-xs font-semibold leading-5 text-slate-500">
+          <figcaption className="border-t border-slate-800 bg-slate-950/80 px-4 py-3 text-xs font-semibold leading-5 text-slate-300 backdrop-blur">
             {visual.caption}
           </figcaption>
         </figure>
@@ -131,8 +138,11 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
         <ConceptCheck lesson={lesson} />
       </div>
 
-      {/* Right Column: Workflow Diagram */}
-      <AgentDiagram />
+      {/* Right Column: Dynamic Animated Diagram */}
+      <div className="space-y-6">
+        <LessonSpecificAnimation lessonOrder={lesson.order} />
+        <AgentDiagram />
+      </div>
     </div>
   );
 }
@@ -155,6 +165,105 @@ function theoryVisual(order: number) {
     alt: "Researcher, writer and reviewer agents handing work to each other",
     caption: "Specialist agents do one job well and pass useful results to the next teammate.",
   };
+}
+
+function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
+  if (lessonOrder === 6) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
+        <div className="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-wider mb-4">
+          <Database size={16} />
+          <span>Shared State Notebook (Live LED Animation)</span>
+        </div>
+        <div className="space-y-3 font-mono text-xs">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+            <span className="text-slate-400">&quot;topic&quot;:</span>
+            <span className="text-blue-400 font-bold">&quot;Multi-Agent Systems&quot;</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between animate-pulse">
+            <span className="text-slate-400">&quot;research&quot;:</span>
+            <span className="text-emerald-400 font-bold">&quot;3 key facts gathered&quot;</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+            <span className="text-slate-400">&quot;draft&quot;:</span>
+            <span className="text-violet-400 font-bold">&quot;Technical draft ready&quot;</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+            <span className="text-slate-400">&quot;review&quot;:</span>
+            <span className="text-amber-400 font-bold">&quot;APPROVED&quot;</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if ([7, 8, 11].includes(lessonOrder)) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
+        <div className="flex items-center gap-2 text-rose-400 font-black text-xs uppercase tracking-wider mb-4">
+          <RefreshCw size={16} className="animate-spin" />
+          <span>Self-Healing Critique Loop Animation</span>
+        </div>
+        <div className="relative p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-black">
+            <span>Status: REJECTED</span>
+            <RefreshCw size={12} className="animate-spin" />
+          </div>
+          <ArrowRight className="mx-auto text-amber-400 rotate-90 my-2 animate-bounce" size={20} />
+          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono">
+            Writer revising draft with Reviewer feedback...
+          </div>
+          <div className="pt-2 flex justify-center gap-2">
+            <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Auto-Correction Active</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (lessonOrder === 9) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
+        <div className="flex items-center gap-2 text-violet-400 font-black text-xs uppercase tracking-wider mb-4">
+          <Layers size={16} />
+          <span>Memory Persistence Architecture</span>
+        </div>
+        <div className="grid gap-3 font-mono text-xs">
+          <div className="p-4 rounded-xl bg-slate-900 border border-violet-500/30 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-violet-300">Short-Term Memory</p>
+              <p className="text-[10px] text-slate-400">In-RAM List []</p>
+            </div>
+            <span className="px-2.5 py-1 rounded bg-violet-500/20 text-violet-300 font-bold text-[10px]">Active Session</span>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-emerald-300">Long-Term Memory</p>
+              <p className="text-[10px] text-slate-400">agent_memory.json File</p>
+            </div>
+            <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">Persisted Disk</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
+      <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-wider mb-3">
+        <Network size={16} />
+        <span>Live Agent Handoff Flow</span>
+      </div>
+      <div className="flex items-center justify-between gap-2 p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
+        <span className="text-blue-400 flex items-center gap-1.5"><Search size={14} /> Researcher</span>
+        <ArrowRight size={16} className="text-slate-500 animate-pulse" />
+        <span className="text-violet-400 flex items-center gap-1.5"><PenLine size={14} /> Writer</span>
+        <ArrowRight size={16} className="text-slate-500 animate-pulse" />
+        <span className="text-emerald-400 flex items-center gap-1.5"><ShieldCheck size={14} /> Reviewer</span>
+      </div>
+    </div>
+  );
 }
 
 function ConceptCheck({ lesson }: { lesson: Lesson }) {
