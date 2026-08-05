@@ -59,6 +59,9 @@ export function TheoryPanel({ lesson }: { lesson: Lesson }) {
           </div>
         )}
 
+        {/* Interactive Architectural Flow Diagram */}
+        <LessonFlowDiagram lessonOrder={lesson.order} />
+
         {/* Visual Graphic */}
         <figure className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2 shadow-inner">
           <Image
@@ -166,6 +169,181 @@ function theoryVisual(order: number) {
     alt: "Researcher, writer and reviewer agents handing work to each other",
     caption: "Specialist agents do one job well and pass useful results to the next teammate.",
   };
+}
+
+/** Tailored Interactive Flow Diagrams for every lesson */
+function LessonFlowDiagram({ lessonOrder }: { lessonOrder: number }) {
+  return (
+    <div className="rounded-2xl border border-slate-900 bg-slate-950 p-6 text-white shadow-xl">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <GitBranch size={18} className="text-blue-400" />
+          <h3 className="text-xs font-black uppercase tracking-[.16em] text-blue-300">
+            System Flow Diagram · Lesson {lessonOrder} Architecture
+          </h3>
+        </div>
+        <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-[10px] font-bold text-blue-300 border border-blue-500/30">
+          Live Flowchart
+        </span>
+      </div>
+
+      {/* Lesson 1: Monolithic vs Multi-Agent Flow */}
+      {lessonOrder === 1 && (
+        <div className="space-y-4">
+          <div className="grid gap-3 md:grid-cols-3 text-center text-xs font-bold">
+            <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-rose-300 space-y-1">
+              <p className="font-black text-rose-400">1. Single Prompt</p>
+              <p className="text-[10px] text-slate-400">Tries all jobs at once</p>
+            </div>
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-amber-300 space-y-1">
+              <p className="font-black text-amber-400">2. Context Overload</p>
+              <p className="text-[10px] text-slate-400">Model loses precision</p>
+            </div>
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-300 space-y-1">
+              <p className="font-black text-emerald-400">3. Specialist Team</p>
+              <p className="text-[10px] text-slate-400">High precision & clarity</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 2 & 3: Multi-Agent Handoff Pipeline Flow */}
+      {(lessonOrder === 2 || lessonOrder === 3) && (
+        <div className="flex flex-wrap items-center justify-around gap-2 text-center text-xs font-bold">
+          <div className="rounded-xl border border-blue-500/40 bg-blue-500/20 px-4 py-3 text-blue-300">
+            <Search size={18} className="mx-auto mb-1 text-blue-400" />
+            <span>Researcher</span>
+          </div>
+          <ArrowRight className="text-slate-500 animate-pulse" size={18} />
+          <div className="rounded-xl border border-violet-500/40 bg-violet-500/20 px-4 py-3 text-violet-300">
+            <PenLine size={18} className="mx-auto mb-1 text-violet-400" />
+            <span>Writer</span>
+          </div>
+          <ArrowRight className="text-slate-500 animate-pulse" size={18} />
+          <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/20 px-4 py-3 text-emerald-300">
+            <ShieldCheck size={18} className="mx-auto mb-1 text-emerald-400" />
+            <span>Reviewer</span>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 4: Researcher Flow */}
+      {lessonOrder === 4 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-3 text-slate-300">
+            <span className="text-blue-400 font-bold">Input Topic</span>: &quot;AI Agents&quot;
+          </div>
+          <ArrowRight className="text-blue-400 animate-pulse" size={16} />
+          <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 text-blue-300 font-bold">
+            ask_ai(researcher_prompt)
+          </div>
+          <ArrowRight className="text-blue-400 animate-pulse" size={16} />
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-300 font-bold">
+            state[&quot;research&quot;] Updated
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 5: Writer Flow */}
+      {lessonOrder === 5 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 text-blue-300">
+            Read: state[&quot;research&quot;]
+          </div>
+          <ArrowRight className="text-violet-400 animate-pulse" size={16} />
+          <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 p-3 text-violet-300 font-bold">
+            writer_agent(notes)
+          </div>
+          <ArrowRight className="text-violet-400 animate-pulse" size={16} />
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-300 font-bold">
+            Write: state[&quot;draft&quot;]
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 6: Shared State Data Flow */}
+      {lessonOrder === 6 && (
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-3 font-mono text-xs">
+          <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+            CENTRAL SHARED STATE DICT {`{ "topic", "research", "draft", "review" }`}
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-[11px]">
+            <div className="p-2 rounded bg-blue-500/10 text-blue-300 border border-blue-500/30">🔍 Writes Research</div>
+            <div className="p-2 rounded bg-violet-500/10 text-violet-300 border border-violet-500/30">✍️ Reads Notes & Writes Draft</div>
+            <div className="p-2 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">🛡️ Validates Draft Quality</div>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 7, 8, 11: Self-Healing Critique Loop Flow */}
+      {(lessonOrder === 7 || lessonOrder === 8 || lessonOrder === 11) && (
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-violet-300 font-bold">Writer generates Draft</span>
+            <ArrowRight size={16} className="text-slate-500" />
+            <span className="text-emerald-300 font-bold">Reviewer checks Quality</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-center">
+            <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
+              ✅ If APPROVED $\rightarrow$ Output Final State
+            </div>
+            <div className="p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300">
+              🔄 If REJECTED $\rightarrow$ Route back to Writer
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 9: Short-Term vs Long-Term Memory Flow */}
+      {lessonOrder === 9 && (
+        <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+          <div className="p-4 rounded-xl bg-slate-900 border border-violet-500/30 space-y-2">
+            <div className="flex items-center gap-2 text-violet-300 font-bold">
+              <Layers size={16} /> Short-Term RAM
+            </div>
+            <p className="text-[11px] text-slate-400">Stores active messages in Python list [] during workflow execution.</p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-900 border border-emerald-500/30 space-y-2">
+            <div className="flex items-center gap-2 text-emerald-300 font-bold">
+              <Database size={16} /> Long-Term Disk
+            </div>
+            <p className="text-[11px] text-slate-400">Saves facts to agent_memory.json file so memory persists across restarts.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson 10: LangGraph Graph Execution Flow */}
+      {lessonOrder === 10 && (
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono flex items-center justify-between text-center">
+          <span className="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 font-bold">START</span>
+          <ArrowRight size={14} className="text-slate-500" />
+          <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200">Node: &quot;researcher&quot;</span>
+          <ArrowRight size={14} className="text-slate-500" />
+          <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200">Node: &quot;writer&quot;</span>
+          <ArrowRight size={14} className="text-slate-500" />
+          <span className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold">END</span>
+        </div>
+      )}
+
+      {/* Lesson 12 & 13: CrewAI / Final Capstone Flow */}
+      {(lessonOrder === 12 || lessonOrder === 13) && (
+        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono space-y-2">
+          <div className="flex items-center justify-between text-slate-300">
+            <span>1. Create Agents (Role, Goal, Backstory)</span>
+            <CheckCircle2 size={14} className="text-emerald-400" />
+          </div>
+          <div className="flex items-center justify-between text-slate-300">
+            <span>2. Define Tasks (Description, Expected Output)</span>
+            <CheckCircle2 size={14} className="text-emerald-400" />
+          </div>
+          <div className="flex items-center justify-between text-emerald-300 font-bold">
+            <span>3. Crew(agents, tasks, process=Sequential).kickoff()</span>
+            <Sparkles size={14} className="text-emerald-400" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function LessonSpecificAnimation({ lessonOrder }: { lessonOrder: number }) {
