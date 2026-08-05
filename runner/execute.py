@@ -9,6 +9,8 @@ import time
 import types
 import urllib.request
 
+DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
+
 
 def limit_resources():
     def lower_soft_limit(kind, desired):
@@ -29,8 +31,8 @@ def limit_resources():
 
 class SafeOS:
     environ = {
-        "OPENROUTER_API_KEY": os.environ.get("OPENROUTER_API_KEY", "sk-or-v1-demo-key-87420"),
-        "MODEL_NAME": os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash"),
+        "OPENROUTER_API_KEY": os.environ.get("OPENROUTER_API_KEY", ""),
+        "MODEL_NAME": os.environ.get("OPENROUTER_MODEL", DEFAULT_MODEL),
         "API_BASE": "https://openrouter.ai/api/v1"
     }
 
@@ -56,10 +58,11 @@ def safe_import(name, *args, **kwargs):
 
 def real_ask_ai(prompt):
     api_key = os.environ.get("OPENROUTER_API_KEY")
+    model = os.environ.get("OPENROUTER_MODEL", DEFAULT_MODEL)
     if api_key:
         try:
             req_data = json.dumps({
-                "model": os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash"),
+                "model": model,
                 "messages": [
                     {"role": "system", "content": "You are a concise AI specialist agent in a live workshop. Provide a direct, focused response without markdown formatting."},
                     {"role": "user", "content": str(prompt)}

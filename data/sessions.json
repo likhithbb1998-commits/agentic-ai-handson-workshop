@@ -5,7 +5,7 @@
     "isLive": true,
     "lessonId": "lesson_03",
     "codeStep": 4,
-    "liveCode": "import json\nimport urllib.request\n\nAPI_KEY = \"sk-or-v1-demo-key-87420\"\nENDPOINT = \"https://openrouter.ai/api/v1/chat/completions\"\n\ndef ask_ai(prompt):\n    # Direct OpenRouter API call using standard library\n    data = json.dumps({\n        \"model\": \"google/gemini-2.5-flash\",\n        \"messages\": [{\"role\": \"user\", \"content\": prompt}]\n    }).encode(\"utf-8\")\n    req = urllib.request.Request(ENDPOINT, data=data)\n    req.add_header(\"Authorization\", f\"Bearer {API_KEY}\")\n    req.add_header(\"Content-Type\", \"application/json\")\n    with urllib.request.urlopen(req) as resp:\n        res = json.loads(resp.read().decode(\"utf-8\"))\n        return res[\"choices\"][0][\"message\"][\"content\"]\n\nresponse = ask_ai(\"What is an AI Agent?\")\nprint(response)",
+    "liveCode": "import json\nimport urllib.request\n\nAPI_KEY = \"sk-or-v1-your-openrouter-key\"\nENDPOINT = \"https://openrouter.ai/api/v1/chat/completions\"\n\ndef ask_ai(prompt):\n    # Direct OpenRouter API call using Nvidia Nemotron 3 Ultra Free Model\n    data = json.dumps({\n        \"model\": \"nvidia/nemotron-3-ultra-550b-a55b:free\",\n        \"messages\": [{\"role\": \"user\", \"content\": prompt}]\n    }).encode(\"utf-8\")\n    req = urllib.request.Request(ENDPOINT, data=data)\n    req.add_header(\"Authorization\", f\"Bearer {API_KEY}\")\n    req.add_header(\"Content-Type\", \"application/json\")\n    with urllib.request.urlopen(req) as resp:\n        res = json.loads(resp.read().decode(\"utf-8\"))\n        return res[\"choices\"][0][\"message\"][\"content\"]\n\nresponse = ask_ai(\"What is an AI Agent?\")\nprint(response)",
     "activity": "code",
     "activeQuizId": null,
     "quizQuestionIndex": 0,
@@ -25,6 +25,6 @@
     "winnerMessage": null,
     "celebration": null,
     "scrollPosition": 0,
-    "updatedAt": "2026-08-05T03:15:00.000Z"
+    "updatedAt": "2026-08-05T03:20:00.000Z"
   }
 ]
