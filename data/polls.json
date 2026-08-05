@@ -1,5 +1,44 @@
 [
-  {"id":"poll_001","lessonId":"lesson_01","question":"Which approach is most reliable for a complex AI project?","options":["One vague prompt for everything","Specialists with clear handoffs","No validation at all","Saving every secret in prompts"],"reward":5,"correctAnswer":1,"explanation":"Clear specialist roles and validated handoffs reduce ambiguity and make failures easier to diagnose."},
-  {"id":"poll_002","lessonId":"lesson_09","question":"What should an agent remember between tasks?","options":["Everything forever","Only relevant, permitted context","Nothing under any circumstance","Every raw system log"],"reward":5,"correctAnswer":1,"explanation":"Useful memory is selective: keep relevant context, respect permissions, and avoid unnecessary retention."},
-  {"id":"poll_003","lessonId":"lesson_12","question":"What is the best first step when a multi-agent workflow fails?","options":["Add more agents immediately","Inspect the state and failed handoff","Hide the error","Award the workflow anyway"],"reward":5,"correctAnswer":1,"explanation":"Inspecting state and the failed handoff reveals whether the issue is routing, data shape, or agent output."}
+  {
+    "id": "poll_001",
+    "lessonId": "lesson_01",
+    "question": "Which approach is most reliable for building complex AI applications?",
+    "options": [
+      "One huge prompt trying to do everything",
+      "Specialist agents working together with clear handoffs",
+      "Running code without any AI model",
+      "Manual copy-pasting between chat windows"
+    ],
+    "reward": 5,
+    "correctAnswer": 1,
+    "explanation": "Clear specialist roles and validated handoffs reduce ambiguity and make failures much easier to diagnose."
+  },
+  {
+    "id": "poll_002",
+    "lessonId": "lesson_09",
+    "question": "What is the best way to handle agent memory in production?",
+    "options": [
+      "Store short-term state in RAM and persist long-term memory in a file/DB",
+      "Store everything in browser cookies",
+      "Clear memory after every single word",
+      "Save all raw logs without structure"
+    ],
+    "reward": 5,
+    "correctAnswer": 0,
+    "explanation": "Useful memory is structured: short-term state keeps active context in RAM, while long-term facts persist to disk."
+  },
+  {
+    "id": "poll_003",
+    "lessonId": "lesson_12",
+    "question": "What is the first step if an agent workflow produces low quality output?",
+    "options": [
+      "Check shared state and add a Reviewer critique loop for self-correction",
+      "Delete the Python installation",
+      "Add 50 more agents at random",
+      "Ignore the output"
+    ],
+    "reward": 5,
+    "correctAnswer": 0,
+    "explanation": "Inspecting state and adding a critique loop allows agents to evaluate and fix their own outputs."
+  }
 ]

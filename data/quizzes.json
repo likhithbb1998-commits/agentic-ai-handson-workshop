@@ -4,74 +4,349 @@
     "lessonId": "lesson_02",
     "title": "Multi-Agent Foundations",
     "questions": [
-      {"id":"q1","question":"What makes a multi-agent system different from one AI prompt?","options":["Specialist roles coordinate through handoffs","It always uses more computers","It has no shared goal","It cannot use tools"],"correctAnswer":0,"explanation":"A multi-agent workflow divides responsibility between specialist roles and coordinates their outputs."},
-      {"id":"q2","question":"Why give agents clear roles?","options":["To increase confusion","To create focused responsibilities","To remove the goal","To avoid all communication"],"correctAnswer":1,"explanation":"Focused responsibilities make prompts, outputs, and evaluation clearer."},
-      {"id":"q3","question":"What is a handoff?","options":["Deleting prior work","Passing useful output to the next agent","Ending every workflow","Changing a password"],"correctAnswer":1,"explanation":"A handoff transfers structured work or state from one specialist to another."},
-      {"id":"q4","question":"Which item should all agents understand?","options":["The shared goal","A random secret","Every CSS class","The leaderboard password"],"correctAnswer":0,"explanation":"Specialists may differ, but they must stay aligned on the shared goal."},
-      {"id":"q5","question":"What reduces duplicated work between agents?","options":["Shared structured state","Longer names","More browser tabs","Ignoring outputs"],"correctAnswer":0,"explanation":"Shared structured state lets each agent build on confirmed prior results."}
+      {
+        "id": "q1",
+        "question": "What is the main benefit of using a Multi-Agent system over a single prompt?",
+        "options": [
+          "Each agent focuses on one specialist role (Researcher, Writer, Reviewer)",
+          "It runs without needing any Python code",
+          "It deletes all previous outputs automatically",
+          "It replaces the need for an API key"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Dividing work into specialist agents makes complex tasks modular, focused, and much easier to debug."
+      },
+      {
+        "id": "q2",
+        "question": "Why do we assign specific roles to different AI agents?",
+        "options": [
+          "To give each agent a clear responsibility and focused instruction",
+          "To make the code run slower",
+          "To hide data from the user",
+          "To avoid writing Python functions"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Role assignment focuses the AI system prompt on doing one specific job exceptionally well."
+      },
+      {
+        "id": "q3",
+        "question": "What is an agent 'handoff'?",
+        "options": [
+          "Passing structured data or output from one agent to the next",
+          "Closing the Python script early",
+          "Deleting the shared state dictionary",
+          "Restarting the web browser"
+        ],
+        "correctAnswer": 0,
+        "explanation": "A handoff transfers useful work or state from an upstream agent to a downstream agent."
+      },
+      {
+        "id": "q4",
+        "question": "What should all agents in a multi-agent team share to work together?",
+        "options": [
+          "A shared mission goal and shared state dictionary",
+          "The same prompt text for every job",
+          "The trainer password",
+          "Different programming languages"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Specialist agents have different roles, but they all read and update the same shared state dictionary."
+      },
+      {
+        "id": "q5",
+        "question": "How does shared state help multi-agent teams?",
+        "options": [
+          "It stores research and drafts so downstream agents can read them",
+          "It encrypts the text so agents cannot read it",
+          "It clears memory after every single word",
+          "It prevents functions from returning values"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Shared state acts like a central notebook where every agent reads prior work and adds its contribution."
+      }
     ],
     "timeLimit": 30,
     "reward": 10,
-    "speedRewards": [50,30,20]
+    "speedRewards": [50, 30, 20]
   },
   {
     "id": "quiz_002",
     "lessonId": "lesson_06",
     "title": "State and Memory",
     "questions": [
-      {"id":"q1","question":"Where should completed research be stored for the Writer?","options":["Shared state","Deleted immediately","Only on the leaderboard","Inside CSS"],"correctAnswer":0,"explanation":"Shared state makes the researcher output available to downstream agents."},
-      {"id":"q2","question":"What belongs in short-term workflow state?","options":["Relevant task context","Every historical log forever","Unrelated passwords","Nothing"],"correctAnswer":0,"explanation":"State should carry only the context needed to complete the current workflow."},
-      {"id":"q3","question":"Why use named state fields?","options":["They make handoffs predictable","They slow the workflow","They remove validation","They hide all data"],"correctAnswer":0,"explanation":"Named fields form a clear contract between agents."},
-      {"id":"q4","question":"What should happen before trusting an agent output?","options":["Validate its shape and meaning","Award coins","Delete it","Rename the browser"],"correctAnswer":0,"explanation":"Validation prevents malformed or irrelevant output entering shared state."},
-      {"id":"q5","question":"Which is the safest memory rule?","options":["Store only useful, permitted context","Store all personal data","Never expire anything","Let students edit server state"],"correctAnswer":0,"explanation":"Minimizing retained context improves privacy and reliability."}
+      {
+        "id": "q1",
+        "question": "In our Python orchestrator, what data structure is used to hold shared state?",
+        "options": [
+          "A Python dictionary {} with keys like 'research' and 'draft'",
+          "An empty text file",
+          "A floating point number",
+          "A CSS stylesheet"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Python dictionaries {} provide simple, clean key-value storage for passing structured state."
+      },
+      {
+        "id": "q2",
+        "question": "What belongs in short-term conversation memory?",
+        "options": [
+          "Recent chat messages and current task context",
+          "Hard drive logs from last year",
+          "Student email passwords",
+          "Unrelated web search results"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Short-term memory holds active conversation history so the model remembers recent context."
+      },
+      {
+        "id": "q3",
+        "question": "Why do we use clear dictionary keys like 'research' and 'draft' in state?",
+        "options": [
+          "So agents know exactly where to read and write information",
+          "To make dictionary keys secret",
+          "To double the execution speed",
+          "To delete previous variables"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Predictable state keys create a reliable contract between agent inputs and outputs."
+      },
+      {
+        "id": "q4",
+        "question": "What is long-term agent memory stored in?",
+        "options": [
+          "A persisted file like agent_memory.json or database",
+          "Temporary RAM that clears when powered off",
+          "The website title bar",
+          "A temporary local variable"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Long-term memory is saved to disk or DB so facts persist across multiple classroom sessions."
+      },
+      {
+        "id": "q5",
+        "question": "Why should we reset or format state before starting a brand new topic?",
+        "options": [
+          "To prevent mixing old topic facts with new task instructions",
+          "Because Python requires deleting files",
+          "To disconnect from the internet",
+          "To log out the student"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Clearing old state prevents context leakage and keeps new agent runs clean and focused."
+      }
     ],
     "timeLimit": 30,
     "reward": 10,
-    "speedRewards": [50,30,20]
+    "speedRewards": [50, 30, 20]
   },
   {
     "id": "quiz_003",
     "lessonId": "lesson_08",
-    "title": "Review and Recovery",
+    "title": "Review and Recovery Loop",
     "questions": [
-      {"id":"q1","question":"What should happen when the Reviewer rejects a draft?","options":["Send feedback to the Writer","End without feedback","Delete research","Restart the computer"],"correctAnswer":0,"explanation":"A useful review loop returns specific feedback to the producing agent."},
-      {"id":"q2","question":"What makes reviewer feedback actionable?","options":["Specific criteria and required changes","Only saying bad","No explanation","Random emojis"],"correctAnswer":0,"explanation":"Specific criteria tell the Writer exactly what must improve."},
-      {"id":"q3","question":"Why set a retry limit?","options":["To prevent infinite loops","To make code longer","To hide errors","To remove quality checks"],"correctAnswer":0,"explanation":"A retry limit gives the workflow a safe stopping condition."},
-      {"id":"q4","question":"What is a good approval output?","options":["A structured decision plus reason","An empty string","A hidden variable","A random number"],"correctAnswer":0,"explanation":"Structured decisions are easy for the graph to route and audit."},
-      {"id":"q5","question":"If every retry fails, what should the workflow do?","options":["Escalate or return a clear failure","Loop forever","Pretend success","Award a reward"],"correctAnswer":0,"explanation":"A controlled escalation preserves safety and makes failure visible."}
+      {
+        "id": "q1",
+        "question": "What happens when the Reviewer agent REJECTS a draft?",
+        "options": [
+          "Feedback is saved to state and sent back to the Writer to fix",
+          "The entire program crashes immediately",
+          "The draft is marked APPROVED anyway",
+          "All research notes are erased"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Rejection triggers a feedback loop where the Writer reads the feedback and generates a revised draft."
+      },
+      {
+        "id": "q2",
+        "question": "What makes Reviewer feedback helpful to the Writer agent?",
+        "options": [
+          "Specific instructions on what needs to be improved",
+          "Only saying 'Good job'",
+          "Returning an empty string",
+          "Random numbers"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Actionable feedback tells the Writer exactly what criteria failed and how to revise the text."
+      },
+      {
+        "id": "q3",
+        "question": "Why do we limit the review loop to 3 retries max?",
+        "options": [
+          "To prevent infinite loops if the draft never passes quality checks",
+          "To save disk space",
+          "Because Python only allows 3 loops",
+          "To stop the API key from working"
+        ],
+        "correctAnswer": 0,
+        "explanation": "A retry threshold guarantees the program will safely terminate rather than looping forever."
+      },
+      {
+        "id": "q4",
+        "question": "What does a Reviewer output when a draft meets all quality checks?",
+        "options": [
+          "An 'APPROVED' decision flag",
+          "An error message",
+          "A new research prompt",
+          "An empty response"
+        ],
+        "correctAnswer": 0,
+        "explanation": "The APPROVED status signals the orchestrator that the workflow has successfully completed."
+      },
+      {
+        "id": "q5",
+        "question": "What is the main goal of a Critique Loop in multi-agent systems?",
+        "options": [
+          "Self-healing: automatically improving work quality before finishing",
+          "Slowing down execution",
+          "Deleting student scores",
+          "Asking the user to rewrite the code"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Critique loops enable self-correction so agents fix their own mistakes without human intervention."
+      }
     ],
     "timeLimit": 30,
     "reward": 10,
-    "speedRewards": [50,30,20]
+    "speedRewards": [50, 30, 20]
   },
   {
     "id": "quiz_004",
     "lessonId": "lesson_10",
     "title": "LangGraph Routing",
     "questions": [
-      {"id":"q1","question":"In LangGraph, what connects nodes?","options":["Edges","Coins","Passwords","CSS classes"],"correctAnswer":0,"explanation":"Edges define how execution moves between nodes."},
-      {"id":"q2","question":"What does a node normally represent?","options":["A unit of work","A leaderboard row","A browser cookie","A color"],"correctAnswer":0,"explanation":"Each node performs a defined operation on workflow state."},
-      {"id":"q3","question":"When are conditional edges useful?","options":["When the next step depends on state","When every route is identical","Only for styling","Never"],"correctAnswer":0,"explanation":"Conditional edges route execution using a decision in the current state."},
-      {"id":"q4","question":"Why compile a graph?","options":["To produce an executable workflow","To award coins","To erase nodes","To create an email"],"correctAnswer":0,"explanation":"Compilation validates and prepares the graph for invocation."},
-      {"id":"q5","question":"What should a graph expose at the end?","options":["A clear final state or result","Private API keys","Infinite retries","Unrelated logs"],"correctAnswer":0,"explanation":"A clear final state lets callers consume and verify the result."}
+      {
+        "id": "q1",
+        "question": "In LangGraph, what do 'Nodes' represent?",
+        "options": [
+          "Agent functions or Python steps that perform work",
+          "HTML buttons on a webpage",
+          "Network cables",
+          "Student user IDs"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Nodes are Python functions that receive the current state dict and return state updates."
+      },
+      {
+        "id": "q2",
+        "question": "In LangGraph, what do 'Edges' represent?",
+        "options": [
+          "Connections that define which node runs next",
+          "Border styling on cards",
+          "Password strings",
+          "File sizes"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Edges connect nodes together, defining the directional flow of data through the graph."
+      },
+      {
+        "id": "q3",
+        "question": "What is a 'Conditional Edge' in a state graph?",
+        "options": [
+          "A decision path that routes execution based on state values",
+          "A line of code that never runs",
+          "A mandatory loop that repeats 100 times",
+          "An error message"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Conditional edges inspect state (e.g. APPROVED vs REJECTED) to pick the next destination node."
+      },
+      {
+        "id": "q4",
+        "question": "What does graph.compile() do in LangGraph?",
+        "options": [
+          "Builds the graph into a runnable workflow application",
+          "Deletes all nodes",
+          "Installs Python on the computer",
+          "Opens a new browser window"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Compiling validates the graph structure and returns an executable application."
+      },
+      {
+        "id": "q5",
+        "question": "What happens to the state dictionary as it passes through LangGraph nodes?",
+        "options": [
+          "Nodes read existing state keys and return updated values",
+          "State is wiped clean at every step",
+          "State turns into a list of numbers",
+          "State is sent as an email"
+        ],
+        "correctAnswer": 0,
+        "explanation": "LangGraph passes the state dictionary from node to node, accumulating updates along the flow."
+      }
     ],
     "timeLimit": 30,
     "reward": 10,
-    "speedRewards": [50,30,20]
+    "speedRewards": [50, 30, 20]
   },
   {
     "id": "quiz_005",
     "lessonId": "lesson_12",
     "title": "CrewAI Roles and Tasks",
     "questions": [
-      {"id":"q1","question":"Which description best fits CrewAI?","options":["A role-and-task collaboration framework","A database","A browser","A Python type"],"correctAnswer":0,"explanation":"CrewAI organizes agents, assigned tasks, and collaboration."},
-      {"id":"q2","question":"What should an agent role describe?","options":["Its responsibility and expertise","Its favorite color","A password","The final rank"],"correctAnswer":0,"explanation":"The role focuses the agent on a defined contribution."},
-      {"id":"q3","question":"What should a task include?","options":["A clear expected output","No goal","Only a name","A secret key"],"correctAnswer":0,"explanation":"Expected output makes completion measurable and handoffs reliable."},
-      {"id":"q4","question":"What does process order control?","options":["How tasks are delegated and executed","The page color","Student login","Coin storage"],"correctAnswer":0,"explanation":"Process configuration determines the crew's execution flow."},
-      {"id":"q5","question":"What is a good final check before kickoff?","options":["Roles, tasks, tools, and outputs align","Every agent has the same role","No task has criteria","The API key is shown to students"],"correctAnswer":0,"explanation":"Alignment across roles, tasks, tools, and outputs prevents gaps."}
+      {
+        "id": "q1",
+        "question": "What is CrewAI designed for?",
+        "options": [
+          "Setting up role-based multi-agent teams quickly",
+          "Editing video files",
+          "Designing web logos",
+          "Compiling C++ applications"
+        ],
+        "correctAnswer": 0,
+        "explanation": "CrewAI provides high-level abstractions like Agent, Task, and Crew for rapid multi-agent development."
+      },
+      {
+        "id": "q2",
+        "question": "In CrewAI, what key attributes define an Agent?",
+        "options": [
+          "Role, Goal, and Backstory",
+          "Physical computer location",
+          "Student grade average",
+          "Custom CSS class"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Role, Goal, and Backstory shape how the LLM behaves and completes its assigned tasks."
+      },
+      {
+        "id": "q3",
+        "question": "In CrewAI, what key attributes define a Task?",
+        "options": [
+          "Description and Expected Output",
+          "List of student names",
+          "Database password",
+          "No goal"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Defining a clear description and expected output ensures the task outcome is clear and verifiable."
+      },
+      {
+        "id": "q4",
+        "question": "What does Process.sequential mean in CrewAI?",
+        "options": [
+          "Tasks are executed one after another in order",
+          "All tasks run backwards",
+          "Tasks run randomly",
+          "Only one task ever runs"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Sequential process executes crew tasks step-by-step in the order they are listed."
+      },
+      {
+        "id": "q5",
+        "question": "How does CrewAI handle communication between tasks?",
+        "options": [
+          "Output from one task is automatically passed to the next task",
+          "You must manually copy and paste text",
+          "Agents send text messages to phones",
+          "It deletes task outputs after execution"
+        ],
+        "correctAnswer": 0,
+        "explanation": "CrewAI handles context passing automatically between sequential tasks in a crew."
+      }
     ],
     "timeLimit": 30,
     "reward": 10,
-    "speedRewards": [50,30,20]
+    "speedRewards": [50, 30, 20]
   }
 ]
