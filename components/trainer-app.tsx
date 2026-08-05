@@ -607,7 +607,10 @@ function ContentLibrary({
         return (
           <button
             key={lesson.id}
-            onClick={() => act({ action: "SET_LESSON", lessonId: lesson.id })}
+            onClick={async () => {
+              await act({ action: "SET_LESSON", lessonId: lesson.id });
+              window.location.href = "/trainer/live";
+            }}
             className={`rounded-2xl border bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
               snapshot.session.lessonId === lesson.id ? "border-blue-400 ring-2 ring-blue-100" : "border-slate-200"
             }`}

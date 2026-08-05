@@ -26,11 +26,14 @@ export function WorkshopProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch("/api/workshop", { cache: "no-store" });
       if (!response.ok) throw new Error("Unable to load the live workshop.");
-      setSnapshot(await response.json());
+      const data = await response.json();
+      setSnapshot(data);
       setError("");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load the workshop.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -39,25 +42,58 @@ export function WorkshopProvider({ children }: { children: React.ReactNode }) {
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
     socket.on("WORKSHOP_UPDATED", () => void refresh());
-    const fallback = window.setInterval(() => void refresh(), 5000);
-    return () => { window.clearInterval(fallback); socket.disconnect(); };
+    
+    // Auto-poll every 2.5 seconds to guarantee live sync across all devices
+    const fallback = window.setInterval(() => void refresh(), 2500);
+    return () => {
+      window.clearInterval(fallback);
+      socket.disconnect();
+    };
   }, [refresh]);
 
-  const act = useCallback(async (payload: Record<string, unknown>) => {
-    const response = await fetch("/api/workshop", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) return { ok: false, error: result.error || "Action failed." };
-    await refresh(); return { ok: true };
-  }, [refresh]);
+  const act = useCallback(
+    async (payload: Record<string, unknown>) => {
+      try {
+        const response = await fetch("/api/workshop", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) return { ok: false, error: result.error || "Action failed." };
+        await refresh();
+        return { ok: true };
+      } catch {
+        return { ok: false, error: "Network error occurred." };
+      }
+    },
+    [refresh]
+  );
 
-  const runCode = useCallback(async (code: string) => {
-    const response = await fetch("/api/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) return { error: result.error || "Execution failed." };
-    await refresh(); return result;
-  }, [refresh]);
+  const runCode = useCallback(
+    async (code: string) => {
+      try {
+        const response = await fetch("/api/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) return { error: result.error || "Execution failed." };
+        await refresh();
+        return result;
+      } catch {
+        return { error: "Network execution error." };
+      }
+    },
+    [refresh]
+  );
 
-  const value = useMemo(() => ({ snapshot, loading, connected, error, refresh, act, runCode }), [snapshot, loading, connected, error, refresh, act, runCode]);
+  const value = useMemo(
+    () => ({ snapshot, loading, connected, error, refresh, act, runCode }),
+    [snapshot, loading, connected, error, refresh, act, runCode]
+  );
+
   return <WorkshopContext.Provider value={value}>{children}</WorkshopContext.Provider>;
 }
 

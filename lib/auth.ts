@@ -11,7 +11,7 @@ function signature(payload: string) {
 }
 
 export function createSessionToken(identity: SessionIdentity) {
-  const payload = Buffer.from(JSON.stringify({ ...identity, exp: Date.now() + 1000 * 60 * 60 * 12 })).toString("base64url");
+  const payload = Buffer.from(JSON.stringify({ ...identity, exp: Date.now() + 1000 * 60 * 60 * 24 })).toString("base64url");
   return `${payload}.${signature(payload)}`;
 }
 
@@ -31,21 +31,25 @@ export function verifySessionToken(token?: string): SessionIdentity | null {
 }
 
 export async function getIdentity() {
-  return verifySessionToken((await cookies()).get(cookieName)?.value);
+  const cookieStore = await cookies();
+  const token = cookieStore.get(cookieName)?.value;
+  return verifySessionToken(token);
 }
 
 export async function setIdentity(identity: SessionIdentity) {
-  (await cookies()).set(cookieName, createSessionToken(identity), {
+  const cookieStore = await cookies();
+  cookieStore.set(cookieName, createSessionToken(identity), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.COOKIE_SECURE === "true",
+    secure: process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
     path: "/",
-    maxAge: 60 * 60 * 12,
+    maxAge: 60 * 60 * 24,
   });
 }
 
 export async function clearIdentity() {
-  (await cookies()).delete(cookieName);
+  const cookieStore = await cookies();
+  cookieStore.delete(cookieName);
 }
 
 export function trainerCredentialsValid(username: string, password: string) {
