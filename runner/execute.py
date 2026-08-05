@@ -29,8 +29,7 @@ def limit_resources():
 
 class SafeOS:
     environ = {
-        "OPENAI_API_KEY": os.environ.get("OPENROUTER_API_KEY", "sk-proj-workshop-demo-key-87420"),
-        "OPENROUTER_API_KEY": os.environ.get("OPENROUTER_API_KEY", ""),
+        "OPENROUTER_API_KEY": os.environ.get("OPENROUTER_API_KEY", "sk-or-v1-demo-key-87420"),
         "MODEL_NAME": os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash"),
         "API_BASE": "https://openrouter.ai/api/v1"
     }
@@ -98,19 +97,43 @@ def real_ask_ai(prompt):
 
 
 def main():
-    limit_resources()
-    payload = json.loads(sys.stdin.read())
-    code = payload.get("code", "")
-    safe_builtins = {
-        "print": print, "len": len, "range": range, "str": str, "int": int,
-        "float": float, "bool": bool, "list": list, "dict": dict, "set": set,
-        "tuple": tuple, "enumerate": enumerate, "zip": zip, "min": min,
-        "max": max, "sum": sum, "sorted": sorted, "abs": abs,
-        "AssertionError": AssertionError, "__import__": safe_import,
+    try:
+        limit_resources()
+    except Exception:
+        pass
+
+    raw_input = sys.stdin.read()
+    if not raw_input:
+        sys.exit(0)
+
+    try:
+        data = json.loads(raw_input)
+        user_code = data.get("code", "")
+    except Exception:
+        user_code = raw_input
+
+    exec_globals = {
+        "__builtins__": {
+            "abs": abs, "all": all, "any": any, "bin": bin, "bool": bool,
+            "bytes": bytes, "callable": callable, "chr": chr, "dict": dict,
+            "dir": dir, "divmod": divmod, "enumerate": enumerate, "filter": filter,
+            "float": float, "format": format, "frozenset": frozenset, "getattr": getattr,
+            "hasattr": hasattr, "hash": hash, "hex": hex, "id": id, "int": int,
+            "isinstance": isinstance, "issubclass": issubclass, "iter": iter, "len": len,
+            "list": list, "map": map, "max": max, "min": min, "next": next,
+            "object": object, "oct": oct, "ord": ord, "pow": pow, "print": print,
+            "range": range, "repr": repr, "reversed": reversed, "round": round,
+            "set": set, "slice": slice, "sorted": sorted, "str": str, "sum": sum,
+            "tuple": tuple, "type": type, "zip": zip, "__import__": safe_import,
+        },
         "ask_ai": real_ask_ai,
     }
-    namespace = {"__builtins__": safe_builtins, "ask_ai": real_ask_ai}
-    exec(compile(code, "<workshop>", "exec"), namespace, namespace)
+
+    try:
+        exec(user_code, exec_globals)
+    except Exception as exc:
+        print(f"{type(exc).__name__}: {exc}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

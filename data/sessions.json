@@ -5,7 +5,7 @@
     "isLive": true,
     "lessonId": "lesson_03",
     "codeStep": 4,
-    "liveCode": "import os\nimport json\n\nAPI_KEY = os.environ.get(\"OPENAI_API_KEY\", \"sk-proj-workshop-demo-key\")\nENDPOINT = \"https://api.openai.com/v1/chat/completions\"\n\ndef ask_ai(prompt):\n    # Sends instruction to model endpoint authenticated with API_KEY\n    return f\"[AI Agent Response]: Formulated response for '{prompt}'\"\n\nresponse = ask_ai(\"What is an AI Agent?\")\nprint(response)",
+    "liveCode": "import json\nimport urllib.request\n\nAPI_KEY = \"sk-or-v1-demo-key-87420\"\nENDPOINT = \"https://openrouter.ai/api/v1/chat/completions\"\n\ndef ask_ai(prompt):\n    # Direct OpenRouter API call using standard library\n    data = json.dumps({\n        \"model\": \"google/gemini-2.5-flash\",\n        \"messages\": [{\"role\": \"user\", \"content\": prompt}]\n    }).encode(\"utf-8\")\n    req = urllib.request.Request(ENDPOINT, data=data)\n    req.add_header(\"Authorization\", f\"Bearer {API_KEY}\")\n    req.add_header(\"Content-Type\", \"application/json\")\n    with urllib.request.urlopen(req) as resp:\n        res = json.loads(resp.read().decode(\"utf-8\"))\n        return res[\"choices\"][0][\"message\"][\"content\"]\n\nresponse = ask_ai(\"What is an AI Agent?\")\nprint(response)",
     "activity": "code",
     "activeQuizId": null,
     "quizQuestionIndex": 0,
@@ -24,6 +24,7 @@
     },
     "winnerMessage": null,
     "celebration": null,
-    "updatedAt": "2026-08-05T00:04:23.320Z"
+    "scrollPosition": 0,
+    "updatedAt": "2026-08-05T03:15:00.000Z"
   }
 ]
